@@ -477,7 +477,7 @@ def make_pdf_4panel(ds1, ds2, filename, varlist='', on_map=True,
         # Get the overall min and max of both DataArrays
         # Always plot both panels on the same colorbar
         vmin_overall = min( [ dr1.data.min(), dr2.data.min() ] )
-        vmax_overall = max( [ dr1.data.max(), dr2.data.min() ] )
+        vmax_overall = max( [ dr1.data.max(), dr2.data.max() ] )
 
         # Loop over rows
         for i in range(n_row):
@@ -490,16 +490,16 @@ def make_pdf_4panel(ds1, ds2, filename, varlist='', on_map=True,
                     dr    = dr1
                     diff  = False
                     ratio = False
-                    vmin  = vmin_overall
                     vmax  = vmax_overall
-                   
+                    vmin  = vmin_overall
+
                  # 2nd DataArray
                 elif i==0 and j == 1:
                     dr    = dr2
                     diff  = False
                     ratio = False
-                    vmin  = vmin_overall
                     vmax  = vmax_overall
+                    vmin  = vmin_overall
                      
                 # Difference
                 elif i==1 and j == 0:
