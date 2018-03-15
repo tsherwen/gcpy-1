@@ -107,3 +107,53 @@ def strpad():
 def strsci():
     # TODO
     pass
+
+
+def safe_div( numer, denom, missing_value=0.0 ):
+
+    '''
+    Performs safe division on two xarray DataArray objects,
+    and returns a third DataArray object with the quotient.
+
+    Parameters
+    -----------
+    numer : xarray.DataArray
+        Numerator of the division
+
+    denom : xarray.DataArray
+        Denominator of the division
+
+    missing_value: optional, float
+        Where division cannot be performed (e.g. denom=0), 
+        this value will be returned instead.
+
+    Returns
+    --------
+    xarray.DataArray object with the result of numer/denom
+
+    Notes
+    -----
+    Assumes that numer and denom have the same coordinates and
+    attributes.  (For benchmarking this is almost always true,
+    as we are usually comparing outputs on the same grid.)
+    
+    Also will ignore any warnings from numpy that say that we have
+    encountered an invalid value in division.  We are going to replace
+    those with the missing_value, so we can safely ignore those.
+    '''
+    
+    # Convert xarray DataArrays to numpy arrays
+    numer_array = numer.values
+    denom_array = denom.values
+
+    # Do the division, using np.divide.  Where the denominator is zero, 
+    # return the missing value instead.  NOTE: result is a numpy array.
+    with np.errstate(divide='ignore', invalid='ignore'):
+        result  = np.where( np.abs(denom_array) > 0.0, 
+                            np.divide( numer_array, denom_array ), 
+                            missing_value )
+
+    # Return a DataArray from result
+    return xr.DataArray( result, 
+                         dims=numer.dims, coords=numer.coords, 
+                         name=numer.name, attrs=numer.attrs  )
